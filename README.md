@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobSearch Platform (App_NST)
 
-## Getting Started
+แพลตฟอร์มหางานที่พัฒนาด้วย Next.js, Prisma, และ Tailwind CSS รองรับการใช้งานทั้งสำหรับผู้หางาน (Seeker) และนายจ้าง (Employer) พร้อมฟีเจอร์หลักเช่น การจัดการโปรไฟล์, โพสต์งาน, บันทึกงาน (Saved Jobs), และ Dark Mode
 
-First, run the development server:
+## 🛠️ ขั้นตอนการติดตั้งและการรันโปรเจกต์ (Installation & Setup)
 
+1. **โคลนโปรเจกต์ลงมาที่เครื่อง (Clone the repository)**
+   ```bash
+   git clone https://github.com/10VE48TKU-KaCha/App_NST.git
+   cd App_NST
+   ```
+
+2. **ติดตั้ง Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **ตั้งค่าตัวแปรสภาพแวดล้อม (Environment Variables)**
+   สร้างไฟล์ `.env` ไว้ที่ root ของโปรเจกต์ แล้วกำหนดค่าดังนี้:
+   ```env
+   DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DATABASE>?schema=public"
+   NEXTAUTH_SECRET="<YOUR_SECRET>"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
+   *(หมายเหตุ: แทนที่ค่า DATABASE_URL ให้ตรงกับฐานข้อมูล PostgreSQL ของคุณ)*
+
+4. **สร้างและอัปเดตฐานข้อมูลด้วย Prisma**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **รันโปรเจกต์ (Start the development server)**
+   ```bash
+   npm run dev
+   ```
+   เปิดเบราว์เซอร์แล้วเข้าไปที่ [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🔄 คำสั่ง Git พื้นฐาน (Git Push & Pull)
+
+### 📥 การดึงอัปเดตโค้ดล่าสุดจาก GitHub (Git Pull)
+หากมีทีมงานอัปเดตโค้ด หรือต้องการดึงโค้ดเวอร์ชันล่าสุดจาก GitHub มาที่เครื่องของคุณ ให้รันคำสั่ง:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git pull origin main
 ```
+*(ถ้ามีการอัปเดตฐานข้อมูล อย่าลืมรัน `npx prisma generate` และ `npx prisma db push` อีกครั้งด้วย)*
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📤 การอัปโหลดโค้ดใหม่ขึ้น GitHub (Git Push)
+เมื่อคุณเขียนโค้ดเสร็จแล้ว และต้องการอัปโหลด (Push) ขึ้นไปยัง GitHub ให้ทำตามขั้นตอนดังนี้:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **เพิ่มไฟล์ที่มีการเปลี่ยนแปลงเข้า Staging**
+   ```bash
+   git add .
+   ```
+2. **คอมมิต (Commit) เพื่อบันทึกประวัติการเปลี่ยนแปลง**
+   *ควรเปลี่ยนข้อความในเครื่องหมายคำพูดให้ตรงกับสิ่งที่คุณแก้ไข*
+   ```bash
+   git commit -m "ใส่ข้อความอธิบายว่าแก้ไขอะไรไปบ้าง เช่น Update README"
+   ```
+3. **พุช (Push) อัปโหลดขึ้น GitHub**
+   ```bash
+   git push origin main
+   ```
