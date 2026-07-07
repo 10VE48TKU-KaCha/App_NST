@@ -1,93 +1,80 @@
 "use client"
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Building, Search } from 'lucide-react'
+import { Search, Code, Palette, PenTool, PieChart, Database, Monitor, Headphones, Briefcase } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
+const categories = [
+  { name: 'Programming & Tech', icon: <Code className="w-6 h-6" />, count: '2,400+' },
+  { name: 'Graphics & Design', icon: <Palette className="w-6 h-6" />, count: '1,800+' },
+  { name: 'Digital Marketing', icon: <PieChart className="w-6 h-6" />, count: '1,200+' },
+  { name: 'Writing & Translation', icon: <PenTool className="w-6 h-6" />, count: '900+' },
+  { name: 'Data Science', icon: <Database className="w-6 h-6" />, count: '600+' },
+  { name: 'IT Support', icon: <Monitor className="w-6 h-6" />, count: '450+' },
+  { name: 'Consulting', icon: <Briefcase className="w-6 h-6" />, count: '800+' },
+  { name: 'Customer Service', icon: <Headphones className="w-6 h-6" />, count: '1,100+' },
+]
 
 export function HomeClient() {
   return (
-    <main className="flex-1">
-      {/* Dynamic Background Elements */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px]" />
-        <div className="absolute top-[60%] -right-[10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]" />
-      </div>
+    <main className="flex-1 bg-muted/10">
+      
+      {/* Hero Section with Massive Search */}
+      <section className="w-full pt-20 pb-16 md:pt-32 md:pb-24 bg-white dark:bg-card border-b">
+        <div className="container px-4 md:px-6 mx-auto flex flex-col items-center text-center">
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl mb-4">
+            หางานและพนักงานใน <span className="text-primary">นครศรีธรรมราช</span>
+          </h1>
+          <p className="text-muted-foreground text-lg mb-8 max-w-2xl">
+            แพลตฟอร์มอันดับ 1 สำหรับชาวนครศรีธรรมราช ค้นหางานที่ใช่ หรือโพสต์หาพนักงานในพื้นที่ได้สะดวกรวดเร็ว
+          </p>
 
-      {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 lg:py-40 relative">
-        <div className="container px-4 md:px-6 relative z-10 mx-auto">
-          <div className="flex flex-col items-center space-y-8 text-center max-w-4xl mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm text-primary"
-            >
-              <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
-              The #1 Platform for Tech Professionals
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="space-y-4"
-            >
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                Find Your Dream Job <br className="hidden sm:block" />
-                <span className="text-gradient">Today</span>
-              </h1>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl leading-relaxed">
-                Connect with elite employers and discover opportunities that match your exceptional skills. Your next career move starts here.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-lg"
-            >
-              <Link
-                className="inline-flex h-12 flex-1 items-center justify-center rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 hover:scale-105"
-                href="/jobs"
-              >
-                <Search className="mr-2 h-4 w-4" /> Browse Jobs
-              </Link>
-              <Link
-                className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-input bg-background/50 backdrop-blur-sm px-8 text-base font-semibold shadow-sm transition-all hover:bg-accent hover:text-accent-foreground hover:scale-105"
-                href="/employer"
-              >
-                <Building className="mr-2 h-4 w-4" /> Post a Job
-              </Link>
-            </motion.div>
+          <div className="w-full max-w-3xl flex items-center shadow-lg rounded-full border bg-background overflow-hidden p-1">
+            <div className="pl-4 pr-2 text-muted-foreground">
+              <Search className="w-5 h-5" />
+            </div>
+            <Input 
+              className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-6 shadow-none" 
+              placeholder="ค้นหางาน เช่น 'สร้างเว็บไซต์', 'ออกแบบโลโก้', 'การตลาดออนไลน์'" 
+            />
+            <Button className="rounded-full px-8 py-6 text-base font-semibold shadow-none hidden sm:flex">
+              ค้นหาเลย
+            </Button>
+          </div>
+          <div className="mt-4 flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
+            <span className="font-medium">ยอดฮิต:</span>
+            <Link href="/jobs?q=frontend" className="hover:text-primary transition-colors">Frontend Developer,</Link>
+            <Link href="/jobs?q=ux" className="hover:text-primary transition-colors">UX/UI Design,</Link>
+            <Link href="/jobs?q=seo" className="hover:text-primary transition-colors">SEO Specialist</Link>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="w-full py-12 border-y border-border/40 bg-muted/30">
+      {/* Categories Section */}
+      <section className="w-full py-16">
         <div className="container px-4 md:px-6 mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-border/40">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="space-y-2">
-              <h3 className="text-4xl font-bold">10k+</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Active Jobs</p>
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="space-y-2">
-              <h3 className="text-4xl font-bold">500+</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Companies</p>
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="space-y-2">
-              <h3 className="text-4xl font-bold">2M+</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Candidates</p>
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }} className="space-y-2">
-              <h3 className="text-4xl font-bold">98%</h3>
-              <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
-            </motion.div>
+          <h2 className="text-2xl font-bold mb-8">หมวดหมู่งานยอดนิยม</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categories.map((cat, i) => (
+              <Link 
+                href={`/jobs?q=${cat.name.split(' ')[0].toLowerCase()}`} 
+                key={i}
+                className="flex flex-col items-center justify-center p-6 bg-white dark:bg-card border rounded-xl hover:shadow-md hover:border-primary/50 transition-all premium-hover text-center gap-3"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  {cat.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{cat.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{cat.count} งาน</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
+
     </main>
   )
 }

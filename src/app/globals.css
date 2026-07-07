@@ -36,50 +36,50 @@
 }
 
 :root {
-  /* Modern Premium Light Theme - Deep Purple/Blue Accents */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.15 0.05 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.05 260);
+  /* Fastwork Style Light Theme - Clean White, Vibrant Blue */
+  --background: oklch(0.99 0 0); /* White */
+  --foreground: oklch(0.2 0 0); /* Dark Gray */
+  --card: oklch(1 0 0); /* White */
+  --card-foreground: oklch(0.2 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.05 260);
-  --primary: oklch(0.45 0.25 264);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.02 260);
-  --secondary-foreground: oklch(0.3 0.1 264);
-  --muted: oklch(0.95 0.02 260);
-  --muted-foreground: oklch(0.55 0.05 260);
-  --accent: oklch(0.95 0.02 260);
-  --accent-foreground: oklch(0.3 0.1 264);
+  --popover-foreground: oklch(0.2 0 0);
+  --primary: oklch(0.55 0.2 260); /* Vibrant Blue (~#0057FF) */
+  --primary-foreground: oklch(1 0 0); /* White */
+  --secondary: oklch(0.96 0 0); /* Light Gray */
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.55 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.2 0 0);
   --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.02 260);
-  --input: oklch(0.9 0.02 260);
-  --ring: oklch(0.45 0.25 264);
-  --radius: 0.75rem;
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0 0); /* Very light gray border */
+  --input: oklch(0.92 0 0);
+  --ring: oklch(0.55 0.2 260);
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Modern Premium Dark Theme - Deep Space / Purple */
-  --background: oklch(0.1 0.02 260);
-  --foreground: oklch(0.95 0.02 260);
-  --card: oklch(0.13 0.02 260);
-  --card-foreground: oklch(0.95 0.02 260);
-  --popover: oklch(0.13 0.02 260);
-  --popover-foreground: oklch(0.95 0.02 260);
-  --primary: oklch(0.65 0.25 264);
-  --primary-foreground: oklch(0.1 0.02 260);
-  --secondary: oklch(0.2 0.05 260);
-  --secondary-foreground: oklch(0.95 0.02 260);
-  --muted: oklch(0.2 0.05 260);
-  --muted-foreground: oklch(0.65 0.05 260);
-  --accent: oklch(0.2 0.05 260);
-  --accent-foreground: oklch(0.95 0.02 260);
+  /* Fastwork Style Dark Theme - Dark Slate */
+  --background: oklch(0.15 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.2 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.2 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.6 0.2 260); /* Slightly lighter blue for dark mode */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.25 0 0);
+  --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.25 0.05 260);
-  --input: oklch(0.25 0.05 260);
-  --ring: oklch(0.65 0.25 264);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.3 0 0);
+  --ring: oklch(0.6 0.2 260);
 }
 
 @layer base {
@@ -94,17 +94,29 @@
   }
 }
 
-/* Glassmorphism utility */
+/* Clean Flat Box (replaces glassmorphism) */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .dark .glass-effect {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+/* Premium Card Hover */
+.premium-hover {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.premium-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
+}
+.dark .premium-hover:hover {
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
 }
 
 /* Gradient text */

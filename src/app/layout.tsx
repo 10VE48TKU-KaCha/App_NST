@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "JobSearch Platform",
-  description: "Find your dream job today",
+  title: "NakhonJobs | แพลตฟอร์มหางานนครศรีธรรมราช",
+  description: "หางานและโพสต์หาพนักงานในจังหวัดนครศรีธรรมราช",
 };
 
 export default function RootLayout({
