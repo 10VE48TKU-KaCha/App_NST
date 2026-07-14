@@ -8,9 +8,13 @@ export default async function DashboardRedirect() {
     redirect('/login')
   }
 
+  if (session.user?.role === 'ADMIN') {
+    redirect('/admin/dashboard')
+  }
+
   if (session.user?.role === 'EMPLOYER') {
     redirect('/employer/dashboard')
   } else {
-    redirect('/dashboard')
+    redirect('/seeker/dashboard')
   }
 }

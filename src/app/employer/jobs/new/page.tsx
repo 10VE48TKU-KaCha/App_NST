@@ -105,6 +105,18 @@ export default async function CreateJobPage() {
               <Label htmlFor="remote" className="font-normal cursor-pointer">This is a 100% Remote position</Label>
             </div>
 
+            <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl mt-6">
+              <div className="flex items-start space-x-3">
+                <input type="checkbox" id="isPremium" name="isPremium" className="h-5 w-5 mt-1 rounded border-amber-400 text-amber-500 focus:ring-amber-500" />
+                <div>
+                  <Label htmlFor="isPremium" className="font-bold cursor-pointer text-amber-700 dark:text-amber-500 text-base">Make this a Premium Job (Mock Payment)</Label>
+                  <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-1">
+                    Premium jobs are pinned to the top of the search results and receive 3x more views. You will be redirected to a mock checkout page.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-4">
               <Button type="button" variant="outline" asChild>
                 <a href="/employer/dashboard">Cancel</a>

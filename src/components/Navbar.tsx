@@ -3,9 +3,20 @@ import { auth } from '@/auth'
 import { Button } from '@/components/ui/button'
 import { Briefcase } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { prisma } from '@/lib/prisma'
+import { NotificationDropdown } from './NotificationDropdown'
 
 export async function Navbar() {
   const session = await auth()
+
+  let notifications: any[] = []
+  if (session?.user?.id) {
+    notifications = await prisma.notification.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    })
+  }
 
   return (
     <header className="px-6 lg:px-12 h-20 flex items-center border-b bg-background sticky top-0 z-50 shadow-sm">
@@ -37,13 +48,16 @@ export async function Navbar() {
           <div className="flex items-center gap-6">
             {session.user?.role === 'SEEKER' && (
               <>
-                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/dashboard">
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/seeker/dashboard">
                   Dashboard
                 </Link>
-                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/saved-jobs">
-                  Saved Jobs
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/seeker/applications">
+                  Applications
                 </Link>
-                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/profile">
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/seeker/saved-jobs">
+                  Saved
+                </Link>
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/seeker/profile">
                   Profile
                 </Link>
               </>
@@ -58,15 +72,29 @@ export async function Navbar() {
                 </Link>
               </>
             )}
+            {session.user?.role === 'ADMIN' && (
+              <>
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/admin/dashboard">
+                  Dashboard
+                </Link>
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/admin/users">
+                  Users
+                </Link>
+                <Link className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors premium-hover" href="/admin/companies">
+                  Companies
+                </Link>
+              </>
+            )}
             
             <div className="h-6 w-px bg-border/60 mx-1"></div>
             
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col items-end">
+              <NotificationDropdown initialNotifications={notifications} />
+              <div className="hidden sm:flex flex-col items-end pl-2">
                 <span className="text-sm font-medium leading-none">{session.user.name || "User"}</span>
-                <span className="text-xs text-muted-foreground">{session.user.role === 'EMPLOYER' ? 'Employer' : 'Seeker'}</span>
+                <span className="text-xs text-muted-foreground">{session.user.role === 'ADMIN' ? 'Admin' : session.user.role === 'EMPLOYER' ? 'Employer' : 'Seeker'}</span>
               </div>
-              <Button variant="outline" size="sm" asChild className="rounded-full premium-hover border-primary/20 hover:bg-primary/5">
+              <Button variant="outline" size="sm" asChild className="rounded-full premium-hover border-primary/20 hover:bg-primary/5 ml-2">
                 <Link href="/api/auth/signout">Sign Out</Link>
               </Button>
             </div>

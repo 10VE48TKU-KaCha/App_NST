@@ -30,7 +30,7 @@ export async function upsertSeekerProfile(formData: FormData) {
     }
   })
 
-  revalidatePath('/profile')
+  revalidatePath('/seeker/profile')
   return { success: true }
 }
 
@@ -41,7 +41,10 @@ export async function applyForJob(formData: FormData) {
   }
 
   const jobId = formData.get('jobId') as string
+  const resumePdf = formData.get('resumePdf') as File | null
+  
   if (!jobId) return { error: 'Missing Job ID' }
+  if (!resumePdf || resumePdf.size === 0) return { error: 'Missing Resume PDF' }
 
   const profile = await prisma.profile.findUnique({
     where: { userId: session.user.id }
@@ -57,28 +60,24 @@ export async function applyForJob(formData: FormData) {
 
   if (!job) return { error: 'Job not found' }
 
-  // Simple Mock AI Match Score: Compare skills to description words
-  const jobWords = new Set(job.description.toLowerCase().split(/\W+/))
-  let matches = 0
-  profile.skills.forEach(skill => {
-    if (jobWords.has(skill.toLowerCase())) matches++
-  })
-  
-  const totalSkills = profile.skills.length || 1
-  let matchScore = Math.round((matches / totalSkills) * 100)
-  if (matchScore > 100) matchScore = 100
-  if (matchScore === 0 && profile.skills.length > 0) matchScore = 10 // baseline
+  let matchScore = 0
+  let aiSummary = "ยังไม่ได้ประมวลผลด้วย AI"
+
+  // Since AI is removed for now, we just mock the score and summary or leave them empty.
+  // In a real app without AI, HR would manually review the resume.
 
   await prisma.application.create({
     data: {
       jobId,
       profileId: profile.id,
-      matchScore
+      status: 'REVIEWING',
+      matchScore,
+      aiSummary
     }
   })
 
   revalidatePath(`/jobs/${jobId}`)
-  revalidatePath('/dashboard')
+  revalidatePath('/seeker/dashboard')
   
   return { success: true }
 }
@@ -114,7 +113,7 @@ export async function withdrawApplication(formData: FormData) {
     where: { id: applicationId }
   })
 
-  revalidatePath('/dashboard')
+  revalidatePath('/seeker/dashboard')
   return { success: true }
 }
 
@@ -155,6 +154,47 @@ export async function toggleSaveJob(formData: FormData) {
   }
 
   revalidatePath(`/jobs/${jobId}`)
-  revalidatePath('/saved-jobs')
+  revalidatePath('/seeker/saved-jobs')
   return { success: true }
+}
+
+
+
+export async function createJobAlert(formData: FormData) {
+  const session = await auth()
+  if (!session?.user || session.user?.role !== 'SEEKER') {
+    // If not logged in, redirect to login
+    const { redirect } = await import('next/navigation');
+    redirect('/login')
+  }
+
+  const profile = await prisma.profile.findUnique({
+    where: { userId: session.user.id }
+  })
+
+  if (!profile) {
+    const { redirect } = await import('next/navigation');
+    redirect('/seeker/profile')
+  }
+
+  const keyword = formData.get('keyword') as string
+  const jobType = formData.get('jobType') as string
+  const remote = formData.get('remote') === 'true'
+  const minSalaryStr = formData.get('minSalary') as string
+  const minSalary = minSalaryStr ? parseInt(minSalaryStr) : null
+
+  await prisma.jobAlert.create({
+    data: {
+      profileId: profile.id,
+      keyword: keyword || null,
+      jobType: jobType || null,
+      remote: remote,
+      minSalary: minSalary
+    }
+  })
+
+  // In a real app, this would trigger a cron job/webhook setup.
+  // We'll just mock the success by redirecting back with a success flag.
+  const { redirect } = await import('next/navigation');
+  redirect('/jobs?alert=success')
 }

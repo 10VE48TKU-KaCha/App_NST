@@ -8,6 +8,30 @@ import { auth } from '@/auth'
 import { applyForJob } from '@/actions/seeker'
 import { Navbar } from '@/components/Navbar'
 
+import { Input } from '@/components/ui/input'
+
+import { Metadata } from 'next'
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const job = await prisma.job.findUnique({
+    where: { id: params.id },
+    include: { company: true }
+  })
+
+  if (!job) return { title: 'Job Not Found' }
+
+  return {
+    title: `${job.title} at ${job.company.name} | NakhonJobs`,
+    description: job.description.substring(0, 160),
+    openGraph: {
+      title: `${job.title} at ${job.company.name}`,
+      description: job.description.substring(0, 160),
+      type: 'website',
+    }
+  }
+}
+
 export default async function JobDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const job = await prisma.job.findUnique({
@@ -45,8 +69,33 @@ export default async function JobDetailsPage(props: { params: Promise<{ id: stri
     }
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": job.title,
+    "description": job.description,
+    "datePosted": job.createdAt.toISOString(),
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": job.company.name,
+      "sameAs": job.company.website || undefined
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": job.location || "Anywhere"
+      }
+    },
+    "employmentType": job.jobType || "FULL_TIME"
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <div className="container mx-auto py-8 px-4 md:px-6 max-w-4xl">
         <Card className="mb-8">
@@ -86,15 +135,19 @@ export default async function JobDetailsPage(props: { params: Promise<{ id: stri
                 You need to complete your profile before applying.
                 <br/>
                 <Button variant="link" className="p-0 h-auto font-semibold" asChild>
-                  <a href="/profile">Go to Profile</a>
+                  <a href="/seeker/profile">Go to Profile</a>
                 </Button>
               </div>
             ) : hasApplied ? (
               <Button disabled className="w-full sm:w-auto font-semibold">You have already applied</Button>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <form action={async (formData) => { "use server"; await applyForJob(formData); }} className="w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto">
+                <form action={async (formData) => { "use server"; await applyForJob(formData); }} className="w-full sm:w-auto flex flex-col gap-2">
                   <input type="hidden" name="jobId" value={job.id} />
+                  <div className="flex flex-col gap-1.5">
+                    <label htmlFor="resumePdf" className="text-sm font-medium">Upload Resume (PDF) for AI Review</label>
+                    <Input type="file" id="resumePdf" name="resumePdf" accept="application/pdf" className="bg-background cursor-pointer" />
+                  </div>
                   <Button type="submit" size="lg" className="w-full font-semibold">Apply Now</Button>
                 </form>
                 <form action={async (formData) => { "use server"; const { toggleSaveJob } = await import('@/actions/seeker'); await toggleSaveJob(formData); }} className="w-full sm:w-auto">

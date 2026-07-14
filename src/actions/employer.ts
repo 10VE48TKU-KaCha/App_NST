@@ -42,8 +42,13 @@ export async function createJob(formData: FormData) {
     return { error: 'Unauthorized' }
   }
 
-  const company = await prisma.company.findUnique({
-    where: { userId: session.user.id }
+  const company = await prisma.company.findFirst({
+    where: { 
+      OR: [
+        { userId: session.user.id },
+        { members: { some: { userId: session.user.id } } }
+      ]
+    }
   })
 
   if (!company) {
@@ -57,10 +62,11 @@ export async function createJob(formData: FormData) {
   const remote = formData.get('remote') === 'on'
   const salaryMinStr = formData.get('salaryMin') as string
   const salaryMaxStr = formData.get('salaryMax') as string
+  const isPremium = formData.get('isPremium') === 'on'
 
   if (!title || !description) return { error: 'Title and description are required' }
 
-  await prisma.job.create({
+  const job = await prisma.job.create({
     data: {
       companyId: company.id,
       title,
@@ -70,8 +76,13 @@ export async function createJob(formData: FormData) {
       remote,
       salaryMin: salaryMinStr ? parseInt(salaryMinStr) : null,
       salaryMax: salaryMaxStr ? parseInt(salaryMaxStr) : null,
+      isPremium: false // Will be updated to true after mock payment
     }
   })
+
+  if (isPremium) {
+    redirect(`/employer/checkout/${job.id}`)
+  }
 
   revalidatePath('/employer/dashboard')
   
@@ -96,8 +107,13 @@ export async function updateApplicationStatus(formData: FormData) {
 
   if (!application) return { error: 'Application not found' }
 
-  const company = await prisma.company.findUnique({
-    where: { userId: session.user.id }
+  const company = await prisma.company.findFirst({
+    where: { 
+      OR: [
+        { userId: session.user.id },
+        { members: { some: { userId: session.user.id } } }
+      ]
+    }
   })
 
   if (application.job.companyId !== company?.id) {
@@ -123,8 +139,13 @@ export async function updateJob(formData: FormData) {
   const jobId = formData.get('jobId') as string
   if (!jobId) return { error: 'Job ID is required' }
 
-  const company = await prisma.company.findUnique({
-    where: { userId: session.user.id }
+  const company = await prisma.company.findFirst({
+    where: { 
+      OR: [
+        { userId: session.user.id },
+        { members: { some: { userId: session.user.id } } }
+      ]
+    }
   })
   
   const existingJob = await prisma.job.findUnique({ where: { id: jobId } })
@@ -168,8 +189,13 @@ export async function deleteJob(formData: FormData) {
   const jobId = formData.get('jobId') as string
   if (!jobId) return { error: 'Job ID is required' }
 
-  const company = await prisma.company.findUnique({
-    where: { userId: session.user.id }
+  const company = await prisma.company.findFirst({
+    where: { 
+      OR: [
+        { userId: session.user.id },
+        { members: { some: { userId: session.user.id } } }
+      ]
+    }
   })
   
   const existingJob = await prisma.job.findUnique({ where: { id: jobId } })
@@ -182,5 +208,27 @@ export async function deleteJob(formData: FormData) {
   })
 
   revalidatePath('/employer/dashboard')
+  redirect('/employer/dashboard')
+}
+
+export async function upgradeJobToPremium(jobId: string) {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'EMPLOYER') return { error: 'Unauthorized' }
+
+  const job = await prisma.job.findUnique({
+    where: { id: jobId },
+    include: { company: true }
+  })
+
+  if (!job || job.company.userId !== session.user.id) return { error: 'Unauthorized' }
+
+  await prisma.job.update({
+    where: { id: jobId },
+    data: { isPremium: true }
+  })
+
+  revalidatePath('/jobs')
+  revalidatePath('/employer/dashboard')
+  
   redirect('/employer/dashboard')
 }
