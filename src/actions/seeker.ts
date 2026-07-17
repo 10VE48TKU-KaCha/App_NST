@@ -162,10 +162,9 @@ export async function toggleSaveJob(formData: FormData) {
 
 export async function createJobAlert(formData: FormData) {
   const session = await auth()
-  if (!session?.user || session.user?.role !== 'SEEKER') {
-    // If not logged in, redirect to login
+  if (!session?.user?.id || session.user?.role !== 'SEEKER') {
     const { redirect } = await import('next/navigation');
-    redirect('/login')
+    return redirect('/login')
   }
 
   const profile = await prisma.profile.findUnique({
@@ -174,7 +173,7 @@ export async function createJobAlert(formData: FormData) {
 
   if (!profile) {
     const { redirect } = await import('next/navigation');
-    redirect('/seeker/profile')
+    return redirect('/seeker/profile')
   }
 
   const keyword = formData.get('keyword') as string
